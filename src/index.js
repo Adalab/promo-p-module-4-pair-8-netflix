@@ -36,3 +36,12 @@ server.get("/movies", (req, res) => {
       }),
   });
 });
+//asegurar la ruta correcta
+const staticServerPathWeb = './public-react/'; 
+// En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWeb));
+
+
+const staticServerPathWebImages = './src/public-movies-images/'; 
+// En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWebImages));
