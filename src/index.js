@@ -36,8 +36,8 @@ server.get("/movies", (req, res) => {
       }),
   });
 });
-//asegurar la ruta correcta
-const staticServerPathWeb = './public-react/'; 
+
+const staticServerPathWeb = './src/public-react/'; 
 // En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerPathWeb));
 
