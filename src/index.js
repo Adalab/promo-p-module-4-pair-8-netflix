@@ -1,6 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const moviesData = require('./data/movies.json');
+const Database = require('better-sqlite3');
+
+// const moviesData = require("./data/movies.json");
+const db = new Database('./src/data/database.db', { verbose: console.log });
 
 // create and config server
 const server = express();
@@ -28,9 +32,17 @@ server.get('/movie/:movieId', (req, res) => {
 });
 
 //aquí empieza el codigo del ejercicio 4.2
-server.get('/movies', (req, res) => {
-  //guardamos el valor del query en una constante
-  const genderFilterParam = req.query.gender ? req.query.gender : '';
+server.get("/movies", (req, res) => {
+  //guardamos el valor del query en una constante (forma antigua)
+  // const genderFilterParam = req.query.gender ? req.query.gender : "";
+  // preparamos la query
+const query = db.prepare('SELECT * FROM movies');
+// ejecutamos la query para obtener todos los registros en un array
+const users = query.all();
+// ejecutamos la query para obtener el primer registro en un objeto
+const user = query.get();
+// 
+const query =query.all(db.prepare (`SELECT * FROM movies`)) 
   //aquí respondemos con el listado filtrado
   res.json({
     success: true,
