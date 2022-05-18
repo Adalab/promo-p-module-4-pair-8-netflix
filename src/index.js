@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const moviesData = require('./data/movies.json');
 const Database = require('better-sqlite3');
 
 // const moviesData = require("./data/movies.json");
