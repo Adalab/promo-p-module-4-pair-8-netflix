@@ -32,32 +32,32 @@ server.get('/movie/:movieId', (req, res) => {
 
 //aquí empieza el codigo del ejercicio 4.2
 server.get("/movies", (req, res) => {
-  //guardamos el valor del query en una constante (forma antigua)
+  
+  //guardamos el valor del query en una constante
   // const genderFilterParam = req.query.gender ? req.query.gender : "";
+  const genderFilterParam = req.query.gender || '';
+  
   // preparamos la query
 const query = db.prepare('SELECT * FROM movies');
 // ejecutamos la query para obtener todos los registros en un array
-const users = query.all();
-// ejecutamos la query para obtener el primer registro en un objeto
-const user = query.get();
+const movieList = query.all(genderFilterParam);
 // 
-const query =query.all(db.prepare (`SELECT * FROM movies`)) 
   //aquí respondemos con el listado filtrado
   res.json({
     success: true,
-    movies: moviesData.movies
-      .filter((item) => item.gender.includes(genderFilterParam))
+    movies: movieList
+      // .filter((item) => item.gender.includes(genderFilterParam))
       //función para ordenar
       //"asc" hace referencia al value del input A-Z en AllMovies.js
       //Se compara con -1 porque en la segunda condición le estamos indicando que la cadena z o referenceStr(z-a) iría por delante de a o compareString(a-z)
-      .sort(function (a, z) {
-        const sortFilterParam = a.title.localeCompare(z.title);
-        if (req.query.sort === 'asc') {
-          return sortFilterParam;
-        } else {
-          return sortFilterParam * -1;
-        }
-      }),
+      // .sort(function (a, z) {
+      //   const sortFilterParam = a.title.localeCompare(z.title);
+      //   if (req.query.sort === 'asc') {
+      //     return sortFilterParam;
+      //   } else {
+      //     return sortFilterParam * -1;
+      //   }
+      // }),
   });
 });
 
