@@ -32,33 +32,61 @@ server.get('/movie/:movieId', (req, res) => {
 
 //aquí empieza el codigo del ejercicio 4.2
 server.get("/movies", (req, res) => {
-  
+
   //guardamos el valor del query en una constante
   // const genderFilterParam = req.query.gender ? req.query.gender : "";
-  const genderFilterParam = req.query.gender || '';
-  
+  const genderFilterParam = req.query.gender;
+
   // preparamos la query
-const query = db.prepare('SELECT * FROM movies');
-// ejecutamos la query para obtener todos los registros en un array
-const movieList = query.all(genderFilterParam);
-// 
+  const query = db.prepare('SELECT * FROM movies');
+  // ejecutamos la query para obtener todos los registros en un array
+  const movieList = query.all();
+  // 
   //aquí respondemos con el listado filtrado
   res.json({
     success: true,
     movies: movieList
-      // .filter((item) => item.gender.includes(genderFilterParam))
-      //función para ordenar
-      //"asc" hace referencia al value del input A-Z en AllMovies.js
-      //Se compara con -1 porque en la segunda condición le estamos indicando que la cadena z o referenceStr(z-a) iría por delante de a o compareString(a-z)
-      // .sort(function (a, z) {
-      //   const sortFilterParam = a.title.localeCompare(z.title);
-      //   if (req.query.sort === 'asc') {
-      //     return sortFilterParam;
-      //   } else {
-      //     return sortFilterParam * -1;
-      //   }
-      // }),
+      .filter((item) => item.gender.includes(genderFilterParam))
+      // función para ordenar
+      // "asc" hace referencia al value del input A-Z en AllMovies.js
+      // Se compara con -1 porque en la segunda condición le estamos indicando que la cadena z o referenceStr(z-a) iría por delante de a o compareString(a-z)
+      .sort(function (a, z) {
+        const sortFilterParam = a.title.localeCompare(z.title);
+        if (req.query.sort === 'asc') {
+          return sortFilterParam;
+        } else {
+          return sortFilterParam * -1;
+        }
+      }),
   });
+});
+
+server.post('/sign-up', (req, res) => {
+  const { email, password } = req.body;
+
+  // preparamos la query para comprobar si el email ya existe
+  const queryEmail = db.prepare(
+    'SELECT * FROM users WHERE email = ?'
+  );
+  // la ejecutamos indicando: SELECT * FROM users  WHERE email = 'lucia@hotmail.com' AND password = 'qwertyui'
+  const user = queryEmail.get(email);
+
+  if (user) {
+    res.json({
+      "success": false,
+      "errorMessage": "Usuaria ya existente"
+    });
+  }
+
+  // preparamos la query
+  const query = db.prepare('INSERT INTO users (email, password) VALUES (?, ?)');
+  // ejecutamos la query
+  const result = query.run(email, password);
+  res.json({
+    "success": true,
+    "userId": result.lastInsertRowid
+  })
+
 });
 
 const staticServerPathWeb = './src/public-react/';
